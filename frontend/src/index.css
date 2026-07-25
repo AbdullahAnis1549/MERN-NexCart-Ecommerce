@@ -1,0 +1,70 @@
+/* Amazon Premium Black & Gold Global Design System */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --bg-primary: #0f1117;
+  --bg-secondary: #131921;
+  --bg-card: #1e2638;
+  --bg-input: #171d2b;
+  --gold-primary: #febd69;
+  --gold-hover: #f3a847;
+  --gold-gradient: linear-gradient(135deg, #ffd700 0%, #ff9900 100%);
+  --gold-border: rgba(254, 189, 105, 0.3);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: #2e3a52;
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: var(--font-family);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Links & Buttons Defaults */
+a {
+  color: var(--gold-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--gold-hover);
+}
+
+button {
+  font-family: var(--font-family);
+}
+
+/* Global Container Utilities */
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Global Inputs & Buttons */
+input, select, textarea {
+  font-family: var(--font-family);
+}
