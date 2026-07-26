@@ -11,6 +11,9 @@ function Home() {
   const [banners, setBanners] = useState([]);
   const [bannerIndex, setBannerIndex] = useState(0);
   const [hoveredCat, setHoveredCat] = useState(null);
+  // Jab tak saari initial API calls resolve na ho jayein, ye true rehta hai —
+  // taake "blank sections" ki jagah ek clean loading screen dikhe
+  const [initialLoading, setInitialLoading] = useState(true);
   const intervalRef = useRef(null);
   const catScrollRef = useRef(null);
 
@@ -28,14 +31,20 @@ function Home() {
     catScrollRef.current?.scrollBy({ left: dir * 300, behavior: "smooth" });
 
   useEffect(() => {
-    api.get("/category/get").then((r) => setCategories(r.data.data || [])).catch(console.error);
-    api.get("/product/get?isBestSeller=true&limit=8").then((r) => setBestSellers(r.data.data || [])).catch(console.error);
-    api.get("/product/get?isFeatured=true&limit=8").then((r) => setFeaturedProducts(r.data.data || [])).catch(console.error);
-    api.get("/banner/get").then((r) => {
+    const catPromise = api.get("/category/get").then((r) => setCategories(r.data.data || [])).catch(console.error);
+    const bestPromise = api.get("/product/get?isBestSeller=true&limit=8").then((r) => setBestSellers(r.data.data || [])).catch(console.error);
+    const featPromise = api.get("/product/get?isFeatured=true&limit=8").then((r) => setFeaturedProducts(r.data.data || [])).catch(console.error);
+    const bannerPromise = api.get("/banner/get").then((r) => {
       const data = r.data.data || [];
       setBanners(data);
       if (data.length > 1) startAutoPlay(data.length);
     }).catch(console.error);
+
+    // Chaaron calls (chahe kisi me error aaye) settle hone ke baad hi loading hataate hain
+    Promise.allSettled([catPromise, bestPromise, featPromise, bannerPromise]).finally(() => {
+      setInitialLoading(false);
+    });
+
     return () => clearInterval(intervalRef.current);
   }, []);
 
@@ -61,6 +70,32 @@ function Home() {
 
   const cleanText = (str) =>
     str ? str.replace(/[^\x00-\x7F]/g, "").trim() : "";
+
+  // Initial loading screen — dark theme se match karta hai, blank white flash ki jagah
+  if (initialLoading) {
+    return (
+      <div style={{
+        width: "100%", minHeight: "100vh",
+        backgroundColor: "#0f1117", color: "#f8fafc",
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center", gap: "1.2rem",
+      }}>
+        <style>{`
+          @keyframes nexcart-spin { to { transform: rotate(360deg); } }
+        `}</style>
+        <div style={{
+          width: "48px", height: "48px",
+          border: "4px solid #2e3a52",
+          borderTopColor: "#febd69",
+          borderRadius: "50%",
+          animation: "nexcart-spin 0.8s linear infinite",
+        }} />
+        <p style={{ color: "#94a3b8", fontSize: "0.95rem", letterSpacing: "0.5px" }}>
+          Loading NexCart...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div style={{ width: "100%", backgroundColor: "#0f1117", color: "#f8fafc", minHeight: "100vh" }}>
