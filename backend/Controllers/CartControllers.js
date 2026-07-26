@@ -85,9 +85,14 @@ export const RemoveFromCart = async (req, res) => {
     cart.items = cart.items.filter((i) => i.productId.toString() !== productId);
     await cart.save();
 
+    const populated = await Cart.findOne({ userId }).populate({
+      path: "items.productId",
+      populate: { path: "catid" }
+    });
+
     return res.status(200).json({
       status: "success",
-      data: await Cart.findOne({ userId })
+      data: populated
     });
   } catch (err) {
     console.log(err);

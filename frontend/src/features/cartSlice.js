@@ -6,27 +6,30 @@ export const fetchCart = createAsyncThunk("cart/fetchCart", async () => {
   return res.data.data;
 });
 
+// Ab dobara fetchCart() call nahi karte — backend ka apna response
+// (jo already updated + populated cart deta hai) seedha state me daal rahe hain.
+// Isse har action ek hi network call me complete ho jata hai, do nahi.
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
-  async ({ productId, quantity }, { dispatch }) => {
-    await api.post("/cart/add", { productId, quantity });
-    dispatch(fetchCart()); // add hone ke baad fresh cart mangwao
+  async ({ productId, quantity }) => {
+    const res = await api.post("/cart/add", { productId, quantity });
+    return res.data.data;
   }
 );
 
 export const updateCartQty = createAsyncThunk(
   "cart/updateCartQty",
-  async ({ productId, quantity }, { dispatch }) => {
-    await api.patch(`/cart/qty/${productId}`, { quantity });
-    dispatch(fetchCart());
+  async ({ productId, quantity }) => {
+    const res = await api.patch(`/cart/qty/${productId}`, { quantity });
+    return res.data.data;
   }
 );
 
 export const removeFromCart = createAsyncThunk(
   "cart/removeFromCart",
-  async (productId, { dispatch }) => {
-    await api.delete(`/cart/remove/${productId}`);
-    dispatch(fetchCart());
+  async (productId) => {
+    const res = await api.delete(`/cart/remove/${productId}`);
+    return res.data.data;
   }
 );
 
@@ -37,7 +40,6 @@ const cartSlice = createSlice({
     loading: false,
   },
   reducers: {
-    // Logout hone par cart bhi khaali kar do
     clearCart: (state) => {
       state.items = [];
     },
@@ -53,6 +55,16 @@ const cartSlice = createSlice({
       })
       .addCase(fetchCart.rejected, (state) => {
         state.loading = false;
+      })
+      // Teeno mutation actions ka response bhi isi tarah state me jata hai
+      .addCase(addToCart.fulfilled, (state, action) => {
+        state.items = action.payload.items || [];
+      })
+      .addCase(updateCartQty.fulfilled, (state, action) => {
+        state.items = action.payload.items || [];
+      })
+      .addCase(removeFromCart.fulfilled, (state, action) => {
+        state.items = action.payload.items || [];
       });
   },
 });
