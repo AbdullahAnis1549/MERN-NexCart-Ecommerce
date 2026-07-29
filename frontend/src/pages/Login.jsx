@@ -58,7 +58,7 @@ function Login() {
           Welcome Back
         </h1>
         <p style={{ color: "#94a3b8", textAlign: "center", marginBottom: "2rem", fontSize: "0.9rem" }}>
-          Sign in to your Amazon Luxury Account
+          Sign in to your NexCart account
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)}>

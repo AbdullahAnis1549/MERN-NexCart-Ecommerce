@@ -148,6 +148,22 @@
   color: #e2e8f0;
 }
 
+.btn-admin-header-logout {
+  padding: 0.55rem 0.9rem;
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: opacity 0.2s ease;
+}
+
+.btn-admin-header-logout:hover {
+  opacity: 0.9;
+}
+
 .admin-user-badge {
   background: linear-gradient(135deg, #febd69 0%, #f3a847 100%);
   color: #131921;

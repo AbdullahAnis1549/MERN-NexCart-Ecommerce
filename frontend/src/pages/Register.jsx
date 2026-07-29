@@ -59,7 +59,7 @@ function Register() {
           Create Account
         </h1>
         <p style={{ color: "#94a3b8", textAlign: "center", marginBottom: "2rem", fontSize: "0.9rem" }}>
-          Join Luxe Store & Enjoy Exclusive Black & Gold Deals
+          Join NexCart and enjoy exclusive deals
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)}>

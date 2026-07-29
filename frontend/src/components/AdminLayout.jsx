@@ -59,14 +59,7 @@ function AdminLayout() {
             🖼️ Banners
           </NavLink>
         </nav>
-        <div className="admin-sidebar-footer">
-          <NavLink to="/" className="btn-store-link">
-            🛒 Back to Storefront
-          </NavLink>
-          <button className="btn-admin-logout" onClick={handleLogout}>
-            🚪 Logout
-          </button>
-        </div>
+        <div className="admin-sidebar-footer"></div>
       </aside>
 
       {/* Main Container */}
@@ -77,6 +70,9 @@ function AdminLayout() {
           <div className="admin-user-profile">
             <span>Welcome, <strong>{user?.name || "Admin"}</strong></span>
             <span className="admin-user-badge">{user?.role || "admin"}</span>
+            <button className="btn-admin-header-logout" onClick={handleLogout}>
+              🚪 Logout
+            </button>
           </div>
         </header>
 

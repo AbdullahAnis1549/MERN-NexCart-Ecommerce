@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { selectUser } from "./features/authSlice";
 import { fetchCart } from "./features/cartSlice";
 import { fetchWishlist } from "./features/wishlistSlice";
@@ -43,6 +43,11 @@ function UserLayout() {
 function App() {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [showSplash, setShowSplash] = useState(true);
+  const splashPlayedRef = useRef(false);
+  const initialPathRef = useRef(location.pathname);
 
   useEffect(() => {
     if (user) {
@@ -50,6 +55,90 @@ function App() {
       dispatch(fetchWishlist());
     }
   }, [user, dispatch]);
+
+  useEffect(() => {
+    if (splashPlayedRef.current) return;
+
+    if (!initialPathRef.current.startsWith("/admin")) {
+      const timer = setTimeout(() => {
+        setShowSplash(false);
+        splashPlayedRef.current = true;
+        navigate("/");
+      }, 2800);
+
+      return () => clearTimeout(timer);
+    }
+
+    splashPlayedRef.current = true;
+    setShowSplash(false);
+  }, [navigate]);
+
+  if (showSplash) {
+    return (
+      <div style={{
+        width: "100%",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "2rem",
+        background: "radial-gradient(circle at top, #1d2230 0%, #090b10 45%, #06070a 100%)",
+        color: "#f8fafc",
+        textAlign: "center",
+      }}>
+        <style>{`
+          @keyframes splashPulse {
+            0%, 100% { transform: translateY(0); opacity: 1; }
+            50% { transform: translateY(-6px); opacity: 0.88; }
+          }
+          @keyframes splashGlow {
+            0%, 100% { text-shadow: 0 0 18px rgba(254,189,105,0.18); }
+            50% { text-shadow: 0 0 32px rgba(254,189,105,0.35); }
+          }
+        `}</style>
+        <div style={{ maxWidth: "640px", width: "100%", animation: "splashPulse 2.8s ease-in-out both" }}>
+          <div style={{ marginBottom: "1.5rem" }}>
+            <span style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.6rem",
+              padding: "0.65rem 1rem",
+              borderRadius: "999px",
+              background: "rgba(254,189,105,0.16)",
+              color: "#febd69",
+              fontWeight: 700,
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              fontSize: "0.78rem",
+            }}>
+              NexCart Intro
+            </span>
+          </div>
+          <h1 style={{
+            margin: 0,
+            fontSize: "clamp(2.4rem, 4vw, 4.2rem)",
+            lineHeight: 1.03,
+            letterSpacing: "-0.05em",
+            color: "#ffffff",
+            animation: "splashGlow 2.8s ease-in-out infinite",
+          }}>
+            MERN Stack E-Commerce
+            <br />
+            Web Application
+          </h1>
+          <p style={{
+            margin: "1.6rem auto 0",
+            maxWidth: "560px",
+            fontSize: "1rem",
+            lineHeight: 1.8,
+            color: "#cbd5e1",
+          }}>
+            Developed with: React.js • Node.js • Express.js • MongoDB
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Routes>
