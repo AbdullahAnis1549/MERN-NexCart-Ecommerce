@@ -67,17 +67,18 @@ function ProductDetail() {
   }
 
   return (
-    <div style={{ width: "100%", minHeight: "100vh", backgroundColor: "#0f1117", padding: "2.5rem 3rem", color: "#f8fafc" }}>
+<div className="rx-page-pad" style={{ width: "100%", minHeight: "100vh", backgroundColor: "#0f1117", padding: "2.5rem 3rem", color: "#f8fafc" }}>
       <Link to="/products" style={{ color: "#febd69", textDecoration: "none", fontWeight: "700", display: "inline-block", marginBottom: "1.5rem" }}>
         ← Back to Products
       </Link>
 
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(300px, 450px) 1fr", gap: "3rem", backgroundColor: "#1e2638", border: "1px solid #2e3a52", borderRadius: "14px", padding: "2.5rem", boxShadow: "0 10px 25px rgba(0,0,0,0.4)" }}>
+      <div className="rx-pd-layout" style={{ display: "grid", gridTemplateColumns: "minmax(300px, 450px) 1fr", gap: "3rem", backgroundColor: "#1e2638", border: "1px solid #2e3a52", borderRadius: "14px", padding: "2.5rem", boxShadow: "0 10px 25px rgba(0,0,0,0.4)" }}>
         {/* Product Image */}
         <div>
           <img
             src={product.productimage}
             alt={product.name}
+            className="rx-pd-img"
             style={{ width: "100%", height: "400px", objectFit: "cover", borderRadius: "12px", border: "1px solid #2e3a52" }}
           />
         </div>
@@ -85,8 +86,8 @@ function ProductDetail() {
         {/* Product Details */}
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
           <div>
-            <h1 style={{ color: "#ffffff", fontSize: "2.2rem", fontWeight: "800", marginBottom: "0.75rem" }}>{product.name}</h1>
-            <p style={{ color: "#febd69", fontSize: "1.8rem", fontWeight: "800", marginBottom: "1.25rem" }}>
+            <h1 className="rx-pd-name" style={{ color: "#ffffff", fontSize: "2.2rem", fontWeight: "800", marginBottom: "0.75rem" }}>{product.name}</h1>
+            <p className="rx-pd-price" style={{ color: "#febd69", fontSize: "1.8rem", fontWeight: "800", marginBottom: "1.25rem" }}>
               Rs. {product.price?.toLocaleString()}
             </p>
             <p style={{ color: "#94a3b8", fontSize: "1rem", lineHeight: "1.6", marginBottom: "1.5rem" }}>
@@ -128,7 +129,7 @@ function ProductDetail() {
               </div>
             )}
 
-            <div style={{ display: "flex", gap: "1rem" }}>
+<div className="rx-pd-btns" style={{ display: "flex", gap: "1rem" }}>
               <button
                 onClick={handleAddToCart}
                 disabled={product.mainStock <= 0}

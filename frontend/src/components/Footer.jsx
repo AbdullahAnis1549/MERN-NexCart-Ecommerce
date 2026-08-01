@@ -4,8 +4,9 @@ import { Link } from "react-router-dom";
 function Footer() {
   return (
     <footer style={{ backgroundColor: "#131921", color: "#94a3b8", borderTop: "2px solid #febd69", fontFamily: "sans-serif" }}>
-      {/* Main Footer Links */}
+{/* Main Footer Links */}
       <div
+        className="rx-footer-grid"
         style={{
           maxWidth: "1200px",
           margin: "0 auto",

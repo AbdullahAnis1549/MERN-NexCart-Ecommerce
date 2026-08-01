@@ -65,7 +65,8 @@ function Contact() {
   return (
     <div style={{ backgroundColor: "#0f172a", color: "#f8fafc", minHeight: "100vh", fontFamily: "sans-serif" }}>
       {/* Header Banner */}
-      <section
+<section
+        className="rx-contact-hero"
         style={{
           background: "linear-gradient(135deg, #131921 0%, #1e293b 100%)",
           padding: "4rem 2rem",
@@ -196,7 +197,7 @@ function Contact() {
             )}
 
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+<div className="rx-contact-form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                 <div>
                   <label style={labelStyle}>Full Name *</label>
                   <input
@@ -223,7 +224,7 @@ function Contact() {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div className="rx-contact-form-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                 <div>
                   <label style={labelStyle}>Phone Number</label>
                   <input

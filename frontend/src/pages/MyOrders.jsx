@@ -73,8 +73,8 @@ function MyOrders() {
   }
 
   return (
-    <div style={{ width: "100%", minHeight: "100vh", backgroundColor: "#0f1117", padding: "2.5rem 3rem", color: "#f8fafc" }}>
-      <h1 style={{ color: "#febd69", fontSize: "2rem", fontWeight: "800", marginBottom: "2rem" }}>
+<div className="rx-page-pad" style={{ width: "100%", minHeight: "100vh", backgroundColor: "#0f1117", padding: "2.5rem 3rem", color: "#f8fafc" }}>
+      <h1 className="rx-orders-title" style={{ color: "#febd69", fontSize: "2rem", fontWeight: "800", marginBottom: "2rem" }}>
         📦 My Orders
       </h1>
 
@@ -113,6 +113,7 @@ function MyOrders() {
           {orders.map((order) => (
             <div
               key={order._id}
+              className="rx-orders-card"
               style={{
                 backgroundColor: "#1e2638",
                 border: "1px solid #2e3a52",
@@ -151,7 +152,7 @@ function MyOrders() {
                 </div>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 250px", gap: "1.5rem" }}>
+<div className="rx-orders-grid" style={{ display: "grid", gridTemplateColumns: "1fr 250px", gap: "1.5rem" }}>
                 <div>
                   <h4 style={{ color: "#cbd5e1", fontSize: "0.9rem", marginBottom: "0.75rem" }}>ITEMS ORDERED</h4>
                   {order.items.map((item) => {

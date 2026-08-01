@@ -58,8 +58,8 @@ function Cart() {
   const total = items.reduce((sum, item) => sum + (item.productId?.price || 0) * item.quantity, 0);
 
   return (
-    <div style={{ width: "100%", minHeight: "100vh", backgroundColor: "#0f1117", padding: "2.5rem 3rem", color: "#f8fafc" }}>
-      <h1 style={{ color: "#febd69", fontSize: "2rem", fontWeight: "800", marginBottom: "2rem" }}>
+<div className="rx-page-pad" style={{ width: "100%", minHeight: "100vh", backgroundColor: "#0f1117", padding: "2.5rem 3rem", color: "#f8fafc" }}>
+      <h1 className="rx-cart-title" style={{ color: "#febd69", fontSize: "2rem", fontWeight: "800", marginBottom: "2rem" }}>
         🛒 Shopping Cart
       </h1>
 
@@ -82,7 +82,7 @@ function Cart() {
           </Link>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "2rem" }}>
+<div className="rx-cart-grid" style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "2rem" }}>
           {/* Cart Items List */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {items.map((item) => {
@@ -90,6 +90,7 @@ function Cart() {
               return (
                 <div
                   key={item.productId._id}
+                  className="rx-cart-item"
                   style={{
                     backgroundColor: "#1e2638",
                     border: "1px solid #2e3a52",
@@ -103,6 +104,7 @@ function Cart() {
                   <img
                     src={item.productId.productimage}
                     alt={item.productId.name}
+                    className="rx-cart-item-img"
                     style={{ width: "90px", height: "90px", objectFit: "cover", borderRadius: "8px", border: "1px solid #2e3a52" }}
                   />
 
@@ -129,7 +131,7 @@ function Cart() {
                   </div>
 
                   {/* Subtotal */}
-                  <div style={{ width: "120px", textAlign: "right" }}>
+<div className="rx-cart-subtotal" style={{ width: "120px", textAlign: "right" }}>
                     <p style={{ color: "#ffffff", fontWeight: "800", fontSize: "1.1rem", margin: 0 }}>
                       Rs. {(item.productId.price * item.quantity).toLocaleString()}
                     </p>

@@ -57,7 +57,8 @@ function About() {
   return (
     <div style={{ backgroundColor: "#0f172a", color: "#f8fafc", minHeight: "100vh", fontFamily: "sans-serif" }}>
       {/* Hero Section */}
-      <section
+<section
+        className="rx-about-hero"
         style={{
           background: "linear-gradient(135deg, #131921 0%, #1e293b 100%)",
           padding: "5rem 2rem",

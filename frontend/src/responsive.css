@@ -1,0 +1,371 @@
+/* ==========================================================================
+   NexCart — Responsive Stylesheet
+   Overrides inline styles at mobile/tablet breakpoints using !important.
+   Breakpoints: 1200 / 1024 / 900 / 768 / 640 / 480
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. GENERIC PAGE PADDING HELPERS
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .rx-page-pad { padding: 1.5rem 1.25rem !important; }
+  .rx-page-pad-lg { padding: 1.75rem 1.25rem !important; }
+}
+@media (max-width: 640px) {
+  .rx-page-pad { padding: 1.25rem 0.85rem !important; }
+  .rx-page-pad-lg { padding: 1.5rem 0.85rem !important; }
+}
+
+/* --------------------------------------------------------------------------
+   2. NAVBAR
+   -------------------------------------------------------------------------- */
+.rx-hamburger {
+  display: none;
+  background: transparent;
+  border: 1px solid #2e3a52;
+  border-radius: 8px;
+  color: #febd69;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.35rem;
+  line-height: 1;
+  flex-shrink: 0;
+  padding: 0;
+}
+
+/* Mobile drawer (slide-in from right) */
+.rx-mobile-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 300px;
+  max-width: 85vw;
+  background-color: #131921;
+  border-left: 2px solid #febd69;
+  box-shadow: -8px 0 25px rgba(0, 0, 0, 0.5);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+  overflow-y: auto;
+  transform: translateX(105%);
+  transition: transform 0.3s ease;
+}
+.rx-mobile-menu.open { transform: translateX(0); }
+
+.rx-mobile-menu a.menu-link {
+  color: #e2e8f0;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.85rem 0.75rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.rx-mobile-menu a.menu-link:hover { background-color: #1e2638; color: #febd69; }
+
+.rx-mobile-menu .rx-mobile-auth {
+  margin-top: 1rem;
+  border-top: 1px solid #2e3a52;
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rx-mobile-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 17, 23, 0.7);
+  backdrop-filter: blur(2px);
+  z-index: 250;
+}
+
+@media (max-width: 1024px) {
+  .rx-nav { padding: 0.7rem 1rem !important; grid-template-columns: 1fr auto !important; }
+  .rx-nav-links { display: none !important; }
+  .rx-nav-divider { display: none !important; }
+  .rx-nav-user-name { display: none !important; }
+  .rx-nav-logout-label { display: none !important; }
+  .rx-nav-signin-label { display: none !important; }
+  .rx-nav-register { display: none !important; }
+  .rx-nav-auth { display: none !important; }
+  .rx-hamburger { display: flex !important; }
+  .rx-nav-right { gap: 0.9rem !important; }
+}
+@media (min-width: 1025px) {
+  .rx-mobile-menu,
+  .rx-mobile-menu-backdrop { display: none !important; }
+}
+@media (max-width: 480px) {
+  .rx-nav-logo > span { font-size: 1.15rem !important; }
+  .rx-logo-box { width: 32px !important; height: 32px !important; }
+}
+
+/* --------------------------------------------------------------------------
+   3. FOOTER
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .rx-footer-grid { padding: 2.5rem 1.25rem 2rem !important; gap: 2rem !important; }
+}
+
+/* --------------------------------------------------------------------------
+   4. HOME PAGE
+   -------------------------------------------------------------------------- */
+/* Hero */
+@media (max-width: 1024px) {
+  .rx-hero { min-height: 460px !important; }
+  .rx-hero-title { font-size: 2.4rem !important; }
+  .rx-hero-desc { font-size: 1rem !important; }
+}
+@media (max-width: 768px) {
+  .rx-hero { height: 62vh !important; min-height: 400px !important; }
+  .rx-hero-text { left: 1.5rem !important; max-width: 85% !important; }
+  .rx-hero-title { font-size: 1.9rem !important; }
+  .rx-hero-desc { font-size: 0.95rem !important; }
+  .rx-hero-cta { padding: 0.75rem 1.7rem !important; font-size: 0.95rem !important; }
+}
+@media (max-width: 480px) {
+  .rx-hero { height: 55vh !important; min-height: 360px !important; }
+  .rx-hero-text { left: 1.1rem !important; right: 1.1rem !important; max-width: 92% !important; }
+  .rx-hero-title { font-size: 1.55rem !important; }
+  .rx-hero-desc { font-size: 0.85rem !important; margin-bottom: 1.2rem !important; }
+  .rx-hero-cta { padding: 0.65rem 1.4rem !important; font-size: 0.9rem !important; }
+}
+
+/* Section paddings */
+@media (max-width: 900px) {
+  .rx-section-pad { padding: 2rem 1.25rem !important; }
+  .rx-section-pad-v { padding: 2.5rem 1.25rem !important; }
+}
+@media (max-width: 640px) {
+  .rx-section-pad { padding: 1.75rem 1rem !important; }
+  .rx-section-pad-v { padding: 2rem 1rem !important; }
+}
+
+/* Section headers */
+@media (max-width: 640px) {
+  .rx-section-header { flex-direction: column !important; align-items: flex-start !important; gap: 0.4rem !important; }
+  .rx-section-title { font-size: 1.4rem !important; }
+  .rx-section-sub { font-size: 0.8rem !important; }
+}
+
+/* Category strip */
+@media (max-width: 640px) {
+  .rx-cat-arrow { display: none !important; }
+}
+@media (max-width: 480px) {
+  .rx-cat-card { width: 120px !important; }
+  .rx-cat-card img { height: 90px !important; }
+}
+
+/* --------------------------------------------------------------------------
+   5. PRODUCT GRIDS (Home + Products)
+   -------------------------------------------------------------------------- */
+.rx-prod-grid-4 {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 1.5rem !important;
+}
+@media (max-width: 1100px) {
+  .rx-prod-grid-4 { grid-template-columns: repeat(3, 1fr) !important; }
+}
+@media (max-width: 768px) {
+  .rx-prod-grid-4 { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
+}
+@media (max-width: 480px) {
+  .rx-prod-grid-4 { grid-template-columns: 1fr !important; }
+}
+
+/* --------------------------------------------------------------------------
+   6. PRODUCT DETAIL PAGE
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .rx-pd-layout { grid-template-columns: 1fr !important; gap: 2rem !important; }
+  .rx-pd-img { height: 320px !important; }
+}
+@media (max-width: 480px) {
+  .rx-pd-img { height: 260px !important; }
+  .rx-pd-name { font-size: 1.5rem !important; }
+  .rx-pd-price { font-size: 1.3rem !important; }
+  .rx-pd-btns { flex-direction: column !important; }
+}
+
+/* --------------------------------------------------------------------------
+   7. CART PAGE
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .rx-cart-grid { grid-template-columns: 1fr !important; }
+  .rx-cart-item { padding: 1rem !important; gap: 1rem !important; flex-wrap: wrap !important; }
+  .rx-cart-item-img { width: 70px !important; height: 70px !important; }
+}
+@media (max-width: 480px) {
+  .rx-cart-title { font-size: 1.5rem !important; }
+  .rx-cart-subtotal { width: auto !important; text-align: left !important; }
+  .rx-cart-item { flex-direction: column !important; align-items: flex-start !important; }
+}
+
+/* --------------------------------------------------------------------------
+   8. CHECKOUT PAGE
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .rx-checkout-options { flex-direction: column !important; }
+  .rx-checkout-box { padding: 1.5rem !important; }
+}
+@media (max-width: 480px) {
+  .rx-checkout-title { font-size: 1.5rem !important; }
+}
+
+/* --------------------------------------------------------------------------
+   9. MY ORDERS
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .rx-orders-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .rx-orders-title { font-size: 1.5rem !important; }
+  .rx-orders-card { padding: 1rem !important; }
+}
+
+/* --------------------------------------------------------------------------
+   10. WISHLIST
+   -------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .rx-wishlist-title { font-size: 1.5rem !important; }
+}
+
+/* --------------------------------------------------------------------------
+   11. CONTACT PAGE
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .rx-contact-hero h1 { font-size: 2rem !important; }
+  .rx-contact-hero { padding: 2.5rem 1.25rem !important; }
+  .rx-contact-form-row { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .rx-contact-hero h1 { font-size: 1.6rem !important; }
+  .rx-contact-hero { padding: 2rem 1rem !important; }
+}
+
+/* --------------------------------------------------------------------------
+   12. ABOUT PAGE
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .rx-about-hero h1 { font-size: 2.2rem !important; }
+  .rx-about-hero { padding: 3rem 1.25rem !important; }
+}
+@media (max-width: 480px) {
+  .rx-about-hero h1 { font-size: 1.7rem !important; }
+  .rx-about-hero { padding: 2rem 1rem !important; }
+}
+
+/* --------------------------------------------------------------------------
+   13. AUTH PAGES (Login / Register / Verify)
+   -------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .rx-auth-card { padding: 1.75rem !important; }
+  .rx-auth-title { font-size: 1.5rem !important; }
+}
+
+/* --------------------------------------------------------------------------
+   14. NOT FOUND PAGE
+   -------------------------------------------------------------------------- */
+.rx-not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  background-color: #0f1117;
+  color: #f8fafc;
+  text-align: center;
+  padding: 2rem;
+}
+.rx-not-found h1 { font-size: 4rem; color: #febd69; margin-bottom: 0.5rem; }
+.rx-not-found p { color: #94a3b8; font-size: 1.1rem; margin-bottom: 1.5rem; }
+@media (max-width: 480px) {
+  .rx-not-found h1 { font-size: 2.5rem; }
+}
+
+/* --------------------------------------------------------------------------
+   15. ADMIN PANEL — RESPONSIVE OVERRIDES
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .admin-sidebar { width: 220px !important; }
+  .admin-header { padding: 1rem 1.5rem !important; }
+  .admin-content { padding: 1.5rem !important; }
+}
+@media (max-width: 768px) {
+  .admin-wrapper { flex-direction: column !important; }
+  .admin-sidebar {
+    width: 100% !important;
+    height: auto !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    border-right: none !important;
+    border-bottom: 1px solid #2e3a52;
+  }
+  .admin-sidebar-header { padding: 0.85rem 1rem !important; }
+  .admin-sidebar-header h2 { font-size: 1.1rem !important; }
+  .admin-nav {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    padding: 0.5rem !important;
+    gap: 0.25rem !important;
+  }
+  .admin-nav-item {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.78rem !important;
+    border-left: none !important;
+    border-radius: 6px !important;
+    white-space: nowrap !important;
+  }
+  .admin-nav-item.active { background: linear-gradient(135deg, rgba(254,189,105,0.15) 0%, transparent 100%) !important; border-left: none !important; }
+  .admin-sidebar-footer { display: none !important; }
+  .admin-header { flex-direction: column !important; gap: 0.5rem !important; padding: 0.85rem 1rem !important; }
+  .admin-header h1 { font-size: 1.2rem !important; }
+  .admin-content { padding: 1rem !important; }
+  .admin-card-header { flex-direction: column !important; gap: 0.75rem !important; padding: 1rem 1.25rem !important; }
+  .admin-card-header h3 { font-size: 1rem !important; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
+  .stat-card { padding: 1.25rem !important; }
+  .stat-info h2 { font-size: 1.4rem !important; }
+  .status-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 0.75rem !important; }
+  .search-input { width: 100% !important; }
+  .admin-table th,
+  .admin-table td { padding: 0.6rem 0.75rem !important; font-size: 0.78rem !important; }
+  .modal-container { max-width: 95vw !important; margin: 0 0.5rem !important; }
+  .modal-header { padding: 1rem 1.25rem !important; }
+  .modal-body { padding: 1.25rem !important; }
+  .modal-footer { padding: 1rem 1.25rem !important; }
+}
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr !important; }
+  .status-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .admin-header h1 { font-size: 1rem !important; }
+  .admin-nav-item { font-size: 0.72rem !important; padding: 0.4rem 0.6rem !important; }
+  .admin-nav { gap: 0.2rem !important; }
+  .admin-card-header h3 { font-size: 0.9rem !important; }
+  .admin-content { padding: 0.75rem !important; }
+  .admin-card-header > div { flex-direction: column !important; gap: 0.5rem !important; }
+  .admin-card-header > div > input,
+  .admin-card-header > div > select { width: 100% !important; }
+}
+
+/* Admin responsive tables: horizontal scroll on small screens */
+@media (max-width: 768px) {
+  .table-responsive { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+}
+
+/* Admin modal grid on small screens */
+@media (max-width: 640px) {
+  .modal-container [style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}

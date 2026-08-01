@@ -43,7 +43,8 @@ function Checkout() {
   };
 
   return (
-    <div
+<div
+      className="rx-page-pad"
       style={{
         width: "100%",
         minHeight: "100vh",
@@ -55,6 +56,7 @@ function Checkout() {
       }}
     >
       <div
+        className="rx-checkout-box"
         style={{
           width: "100%",
           maxWidth: "600px",
@@ -66,7 +68,7 @@ function Checkout() {
           height: "fit-content",
         }}
       >
-        <h1 style={{ color: "#febd69", fontSize: "2rem", fontWeight: "800", marginBottom: "1.5rem", textAlign: "center" }}>
+        <h1 className="rx-checkout-title" style={{ color: "#febd69", fontSize: "2rem", fontWeight: "800", marginBottom: "1.5rem", textAlign: "center" }}>
           💳 Checkout & Payment
         </h1>
 
@@ -75,7 +77,7 @@ function Checkout() {
           <label style={{ display: "block", marginBottom: "0.75rem", fontSize: "0.95rem", color: "#cbd5e1", fontWeight: "600" }}>
             Select Payment Method:
           </label>
-          <div style={{ display: "flex", gap: "1rem" }}>
+<div className="rx-checkout-options" style={{ display: "flex", gap: "1rem" }}>
             <button
               type="button"
               onClick={() => setPaymentMethod("COD")}

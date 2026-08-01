@@ -104,7 +104,7 @@ function Home() {
           HERO  —  banner image as full background
           ════════════════════════════════════════════ */}
       <Link to="/products" style={{ display: "block", textDecoration: "none" }}>
-        <div style={{
+<div className="rx-hero" style={{
           position: "relative",
           height: "calc(97vh - 90px)",
           minHeight: "500px",
@@ -137,7 +137,7 @@ function Home() {
           }} />
 
           {/* Text content */}
-          <div style={{
+          <div className="rx-hero-text" style={{
             position: "absolute", top: "50%", left: "3.5rem",
             transform: "translateY(-50%)",
             maxWidth: "560px",
@@ -154,21 +154,21 @@ function Home() {
                 Special Offer
               </span>
             )}
-            <h1 style={{
+            <h1 className="rx-hero-title" style={{
               fontSize: "3rem", fontWeight: "900", color: "#febd69",
               marginBottom: "0.9rem", letterSpacing: "-1px", lineHeight: 1.15,
               textShadow: "0 2px 18px rgba(0,0,0,0.7)",
             }}>
               {cleanText(curBanner?.title) || "LUXURY SHOPPING REDEFINED"}
             </h1>
-            <p style={{
+            <p className="rx-hero-desc" style={{
               fontSize: "1.1rem", color: "#cbd5e1",
               maxWidth: "500px", margin: "0 0 2rem 0", lineHeight: 1.65,
               textShadow: "0 1px 8px rgba(0,0,0,0.6)",
             }}>
               {cleanText(curBanner?.description) || "Discover top-tier products, premium deals, and lightning-fast delivery with our exclusive Black & Gold Collection."}
             </p>
-            <span style={{
+            <span className="rx-hero-cta" style={{
               display: "inline-block",
               background: "linear-gradient(135deg, #febd69 0%, #f3a847 100%)",
               color: "#131921",
@@ -214,14 +214,14 @@ function Home() {
       {/* ════════════════════════════════════════════
           SHOP BY CATEGORY  —  single scrollable row
           ════════════════════════════════════════════ */}
-      <div style={{ padding: "2.5rem 2.5rem 2.5rem" }}>
+<div className="rx-section-pad" style={{ padding: "2.5rem 2.5rem 2.5rem" }}>
         {/* Header */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.4rem" }}>
+        <div className="rx-section-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.4rem" }}>
           <div>
-            <h2 style={{ color: "#ffffff", fontSize: "1.8rem", margin: 0, fontWeight: "800" }}>
+            <h2 className="rx-section-title" style={{ color: "#ffffff", fontSize: "1.8rem", margin: 0, fontWeight: "800" }}>
               Shop by Category
             </h2>
-            <p style={{ color: "#64748b", margin: "0.3rem 0 0", fontSize: "0.9rem" }}>
+            <p className="rx-section-sub" style={{ color: "#64748b", margin: "0.3rem 0 0", fontSize: "0.9rem" }}>
               Browse your favourite category and find what you love
             </p>
           </div>
@@ -235,7 +235,8 @@ function Home() {
         ) : (
           <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
             {/* Left arrow */}
-            <button
+<button
+              className="rx-cat-arrow"
               onClick={() => scrollCats(-1)}
               style={arrowStyle()}
               onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(254,189,105,0.75)")}
@@ -258,14 +259,14 @@ function Home() {
               `}</style>
 
               {categories.map((cat) => (
-                <Link
+<Link
                   key={cat._id}
                   to={`/products?category=${cat._id}`}
                   style={{ textDecoration: "none", flexShrink: 0 }}
                   onMouseEnter={() => setHoveredCat(cat._id)}
                   onMouseLeave={() => setHoveredCat(null)}
                 >
-                  <div style={{
+                  <div className="rx-cat-card" style={{
                     width: "148px",
                     backgroundColor: hoveredCat === cat._id ? "#1e2a3a" : "#161d2b",
                     border: hoveredCat === cat._id ? "2px solid #febd69" : "2px solid #2e3a52",
@@ -306,7 +307,8 @@ function Home() {
             </div>
 
             {/* Right arrow */}
-            <button
+<button
+              className="rx-cat-arrow"
               onClick={() => scrollCats(1)}
               style={arrowStyle()}
               onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(254,189,105,0.75)")}
@@ -319,21 +321,21 @@ function Home() {
       {/* ════════════════════════════════════════════
           BEST SELLING
           ════════════════════════════════════════════ */}
-      {bestSellers.length > 0 && (
-        <div style={{
+{bestSellers.length > 0 && (
+        <div className="rx-section-pad-v" style={{
           padding: "3rem 2.5rem",
           background: "linear-gradient(180deg, #0f1117 0%, #131921 100%)",
           borderTop: "1px solid #1e2638",
           borderBottom: "1px solid #1e2638",
         }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
+          <div className="rx-section-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
             <div>
-              <h2 style={{ color: "#ffffff", fontSize: "1.8rem", margin: 0, fontWeight: "800" }}>🔥 Best Selling</h2>
-              <p style={{ color: "#64748b", margin: "0.3rem 0 0", fontSize: "0.9rem" }}>Our most loved products — flying off the shelves</p>
+              <h2 className="rx-section-title" style={{ color: "#ffffff", fontSize: "1.8rem", margin: 0, fontWeight: "800" }}>🔥 Best Selling</h2>
+              <p className="rx-section-sub" style={{ color: "#64748b", margin: "0.3rem 0 0", fontSize: "0.9rem" }}>Our most loved products — flying off the shelves</p>
             </div>
             <Link to="/products" style={{ color: "#febd69", fontWeight: "700", textDecoration: "none", fontSize: "0.9rem" }}>View All →</Link>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.5rem" }}>
+          <div className="rx-prod-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.5rem" }}>
             {bestSellers.map((p) => <ProductCard key={p._id} product={p} />)}
           </div>
         </div>
@@ -342,16 +344,16 @@ function Home() {
       {/* ════════════════════════════════════════════
           FEATURED COLLECTION
           ════════════════════════════════════════════ */}
-      {featuredProducts.length > 0 && (
-        <div style={{ padding: "3rem 2.5rem" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
+{featuredProducts.length > 0 && (
+        <div className="rx-section-pad-v" style={{ padding: "3rem 2.5rem" }}>
+          <div className="rx-section-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
             <div>
-              <h2 style={{ color: "#ffffff", fontSize: "1.8rem", margin: 0, fontWeight: "800" }}>⭐ Featured Collection</h2>
-              <p style={{ color: "#64748b", margin: "0.3rem 0 0", fontSize: "0.9rem" }}>Handpicked premium selections just for you</p>
+              <h2 className="rx-section-title" style={{ color: "#ffffff", fontSize: "1.8rem", margin: 0, fontWeight: "800" }}>⭐ Featured Collection</h2>
+              <p className="rx-section-sub" style={{ color: "#64748b", margin: "0.3rem 0 0", fontSize: "0.9rem" }}>Handpicked premium selections just for you</p>
             </div>
             <Link to="/products" style={{ color: "#febd69", fontWeight: "700", textDecoration: "none", fontSize: "0.9rem" }}>View All →</Link>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.5rem" }}>
+          <div className="rx-prod-grid-4" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.5rem" }}>
             {featuredProducts.map((p) => <ProductCard key={p._id} product={p} />)}
           </div>
         </div>

@@ -48,8 +48,8 @@ function Products() {
   };
 
   return (
-    <div style={{ padding: "2rem 2rem", width: "100%", minHeight: "100vh", backgroundColor: "#0f1117", boxSizing: "border-box" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
+<div className="rx-page-pad" style={{ padding: "2rem 2rem", width: "100%", minHeight: "100vh", backgroundColor: "#0f1117", boxSizing: "border-box" }}>
+      <div className="rx-section-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
         <h1 style={{ color: "#febd69", margin: 0, fontSize: "2rem", fontWeight: "800" }}>🛍️ Explore Products</h1>
 
         <select
@@ -78,8 +78,8 @@ function Products() {
       {loading && <div style={{ color: "#94a3b8", fontSize: "1.1rem" }}>Loading products...</div>}
       {error && <div style={{ color: "#ef4444" }}>{error}</div>}
 
-      {!loading && !error && (
-        <div style={{
+{!loading && !error && (
+        <div className="rx-prod-grid-4" style={{
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
           gap: "1.5rem",

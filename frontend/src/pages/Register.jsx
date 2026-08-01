@@ -43,7 +43,8 @@ function Register() {
         padding: "2rem 1rem",
       }}
     >
-      <div
+<div
+        className="rx-auth-card"
         style={{
           width: "100%",
           maxWidth: "460px",
@@ -55,7 +56,7 @@ function Register() {
           color: "#f8fafc",
         }}
       >
-        <h1 style={{ color: "#febd69", textAlign: "center", marginBottom: "0.5rem", fontSize: "2rem", fontWeight: "800" }}>
+        <h1 className="rx-auth-title" style={{ color: "#febd69", textAlign: "center", marginBottom: "0.5rem", fontSize: "2rem", fontWeight: "800" }}>
           Create Account
         </h1>
         <p style={{ color: "#94a3b8", textAlign: "center", marginBottom: "2rem", fontSize: "0.9rem" }}>

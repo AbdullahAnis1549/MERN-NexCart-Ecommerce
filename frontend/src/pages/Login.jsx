@@ -42,7 +42,8 @@ function Login() {
         padding: "2rem",
       }}
     >
-      <div
+<div
+        className="rx-auth-card"
         style={{
           width: "100%",
           maxWidth: "420px",
@@ -54,7 +55,7 @@ function Login() {
           color: "#f8fafc",
         }}
       >
-        <h1 style={{ color: "#febd69", textAlign: "center", marginBottom: "0.5rem", fontSize: "2rem" }}>
+        <h1 className="rx-auth-title" style={{ color: "#febd69", textAlign: "center", marginBottom: "0.5rem", fontSize: "2rem" }}>
           Welcome Back
         </h1>
         <p style={{ color: "#94a3b8", textAlign: "center", marginBottom: "2rem", fontSize: "0.9rem" }}>
