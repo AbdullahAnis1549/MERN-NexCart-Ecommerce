@@ -178,6 +178,7 @@ export const Forgotpassword = async (req, res) => {
             });
         }
         const randomCode = Math.floor(10000 + Math.random() * 90000);
+        console.log(`\n=========================================\n🔑 [PASSWORD RESET CODE for ${email}]: ${randomCode}\n=========================================\n`);
         await sendEmail({
             to: email,
             subject: "Password Reset Code",

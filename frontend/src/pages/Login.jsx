@@ -113,6 +113,12 @@ function Login() {
             </div>
           )}
 
+          <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1.25rem" }}>
+            <Link to="/forgot-password" style={{ color: "#febd69", fontSize: "0.85rem", fontWeight: "600", textDecoration: "none" }}>
+              Forgot Password?
+            </Link>
+          </div>
+
           <button
             type="submit"
             disabled={loading}

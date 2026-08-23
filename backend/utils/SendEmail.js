@@ -3,18 +3,23 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.Gmailuser,
-    pass: process.env.Gmailpassword,
-  },
-});
-
 const sendEmail = async ({ from, to, replyTo, subject, text, html }) => {
   try {
+    const user = process.env.Gmailuser;
+    const pass = process.env.Gmailpassword ? process.env.Gmailpassword.replace(/\s+/g, "") : "";
+
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
+      auth: {
+        user,
+        pass,
+      },
+    });
+
     const mailOptions = {
-      from: from || `"NexCart Store" <${process.env.Gmailuser}>`,
+      from: from || `"NexCart Store" <${user}>`,
       to,
       subject,
     };
@@ -30,9 +35,10 @@ const sendEmail = async ({ from, to, replyTo, subject, text, html }) => {
     }
 
     const info = await transporter.sendMail(mailOptions);
-    console.log("Email Sent to:", to, "| MessageId:", info.messageId);
+    console.log("✅ Email Sent successfully to:", to, "| MessageId:", info.messageId);
+    return info;
   } catch (error) {
-    console.error("Email Error for:", to, "| Error:", error.message || error);
+    console.error("❌ Email Error for:", to, "| Error:", error.message || error);
   }
 };
 
