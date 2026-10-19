@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node Server.js",
-    "dev": "nodemon Server.js"
+    "dev": "nodemon Server.js",
+    "seed:reviews": "node scripts/seedReviews.js",
+    "cleanup:reviews": "node scripts/removeSeededReviews.js"
   },
   "author": "",
   "license": "ISC",

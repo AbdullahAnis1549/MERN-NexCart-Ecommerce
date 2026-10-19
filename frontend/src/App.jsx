@@ -30,6 +30,7 @@ import AdminBanners from "./pages/Admin/AdminBanners";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop";
 
 // User Layout (Includes User Navbar and Footer)
 function UserLayout() {
@@ -54,10 +55,12 @@ function App() {
   }, [user, dispatch]);
 
   return (
-    <Routes>
-      {/* Main User Storefront Routes (with User Navbar) */}
-      <Route element={<UserLayout />}>
-        <Route path="/" element={<Home />} />
+    <>
+      <ScrollToTop />
+      <Routes>
+        {/* Main User Storefront Routes (with User Navbar) */}
+        <Route element={<UserLayout />}>
+          <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify" element={<Verify />} />
@@ -91,6 +94,7 @@ function App() {
         <Route path="banners" element={<AdminBanners />} />
       </Route>
     </Routes>
+    </>
   );
 }
 

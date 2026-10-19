@@ -15,13 +15,18 @@ function Cart() {
     if (user) dispatch(fetchCart());
   }, [user, dispatch]);
 
-  const handleQuantityChange = (productId, newQty) => {
-    if (newQty < 1) return;
-    dispatch(updateCartQty({ productId, quantity: newQty }));
+  const getItemPrice = (product) => {
+    if (!product) return 0;
+    return typeof product.activePrice === "number" ? product.activePrice : (product.price || 0);
   };
 
-  const handleRemove = (productId) => {
-    dispatch(removeFromCart(productId));
+  const handleQuantityChange = (itemId, newQty) => {
+    if (newQty < 1) return;
+    dispatch(updateCartQty({ itemId, quantity: newQty }));
+  };
+
+  const handleRemove = (itemId) => {
+    dispatch(removeFromCart(itemId));
   };
 
   if (!user) {
@@ -55,10 +60,10 @@ function Cart() {
     );
   }
 
-  const total = items.reduce((sum, item) => sum + (item.productId?.price || 0) * item.quantity, 0);
+  const total = items.reduce((sum, item) => sum + getItemPrice(item.productId) * item.quantity, 0);
 
   return (
-<div className="rx-page-pad" style={{ width: "100%", minHeight: "100vh", backgroundColor: "#0f1117", padding: "2.5rem 3rem", color: "#f8fafc" }}>
+    <div className="rx-page-pad" style={{ width: "100%", minHeight: "100vh", backgroundColor: "#0f1117", padding: "2.5rem 3rem", color: "#f8fafc" }}>
       <h1 className="rx-cart-title" style={{ color: "#febd69", fontSize: "2rem", fontWeight: "800", marginBottom: "2rem" }}>
         🛒 Shopping Cart
       </h1>
@@ -82,14 +87,16 @@ function Cart() {
           </Link>
         </div>
       ) : (
-<div className="rx-cart-grid" style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "2rem" }}>
+        <div className="rx-cart-grid" style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "2rem" }}>
           {/* Cart Items List */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {items.map((item) => {
               if (!item.productId) return null;
+              const itemPrice = getItemPrice(item.productId);
+              const itemId = item._id || item.productId._id;
               return (
                 <div
-                  key={item.productId._id}
+                  key={itemId}
                   className="rx-cart-item"
                   style={{
                     backgroundColor: "#1e2638",
@@ -109,21 +116,53 @@ function Cart() {
                   />
 
                   <div style={{ flex: 1 }}>
-                    <h3 style={{ color: "#ffffff", fontSize: "1.1rem", marginBottom: "0.4rem" }}>{item.productId.name}</h3>
-                    <p style={{ color: "#febd69", fontWeight: "700", fontSize: "1rem" }}>Rs. {item.productId.price?.toLocaleString()}</p>
+                    <h3 style={{ color: "#ffffff", fontSize: "1.1rem", marginBottom: "0.3rem" }}>{item.productId.name}</h3>
+
+                    {/* Color and Size Attributes */}
+                    {(item.color || item.size) && (
+                      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", marginBottom: "0.4rem", flexWrap: "wrap" }}>
+                        {item.color && (
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", backgroundColor: "#131921", border: "1px solid #2e3a52", padding: "0.15rem 0.5rem", borderRadius: "6px", fontSize: "0.75rem", color: "#cbd5e1" }}>
+                            <span style={{ width: "10px", height: "10px", borderRadius: "50%", backgroundColor: item.color, border: "1px solid rgba(255,255,255,0.4)" }} />
+                            {item.color}
+                          </span>
+                        )}
+                        {item.size && (
+                          <span style={{ backgroundColor: "#131921", border: "1px solid #2e3a52", padding: "0.15rem 0.5rem", borderRadius: "6px", fontSize: "0.75rem", color: "#cbd5e1", fontWeight: "600" }}>
+                            Size: {item.size}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", flexWrap: "wrap" }}>
+                      <p style={{ color: "#febd69", fontWeight: "700", fontSize: "1rem", margin: 0 }}>
+                        Rs. {itemPrice.toLocaleString()}
+                      </p>
+                      {item.productId.isOnSale && (
+                        <>
+                          <span style={{ color: "#94a3b8", textDecoration: "line-through", fontSize: "0.85rem" }}>
+                            Rs. {item.productId.price?.toLocaleString()}
+                          </span>
+                          <span style={{ backgroundColor: "rgba(239, 68, 68, 0.2)", color: "#ef4444", border: "1px solid rgba(239, 68, 68, 0.4)", borderRadius: "4px", padding: "0.1rem 0.35rem", fontSize: "0.7rem", fontWeight: "800" }}>
+                            {item.productId.discountPercent}% OFF
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </div>
 
                   {/* Quantity Controls */}
                   <div style={{ display: "flex", alignItems: "center", backgroundColor: "#131921", border: "1px solid #2e3a52", borderRadius: "6px" }}>
                     <button
-                      onClick={() => handleQuantityChange(item.productId._id, item.quantity - 1)}
+                      onClick={() => handleQuantityChange(itemId, item.quantity - 1)}
                       style={{ padding: "0.4rem 0.8rem", backgroundColor: "transparent", color: "#ffffff", border: "none", cursor: "pointer", fontWeight: "bold" }}
                     >
                       -
                     </button>
                     <span style={{ padding: "0 0.8rem", color: "#febd69", fontWeight: "700" }}>{item.quantity}</span>
                     <button
-                      onClick={() => handleQuantityChange(item.productId._id, item.quantity + 1)}
+                      onClick={() => handleQuantityChange(itemId, item.quantity + 1)}
                       style={{ padding: "0.4rem 0.8rem", backgroundColor: "transparent", color: "#ffffff", border: "none", cursor: "pointer", fontWeight: "bold" }}
                     >
                       +
@@ -131,15 +170,15 @@ function Cart() {
                   </div>
 
                   {/* Subtotal */}
-<div className="rx-cart-subtotal" style={{ width: "120px", textAlign: "right" }}>
+                  <div className="rx-cart-subtotal" style={{ width: "120px", textAlign: "right" }}>
                     <p style={{ color: "#ffffff", fontWeight: "800", fontSize: "1.1rem", margin: 0 }}>
-                      Rs. {(item.productId.price * item.quantity).toLocaleString()}
+                      Rs. {(itemPrice * item.quantity).toLocaleString()}
                     </p>
                   </div>
 
                   {/* Remove Button */}
                   <button
-                    onClick={() => handleRemove(item.productId._id)}
+                    onClick={() => handleRemove(itemId)}
                     style={{
                       backgroundColor: "transparent",
                       border: "none",

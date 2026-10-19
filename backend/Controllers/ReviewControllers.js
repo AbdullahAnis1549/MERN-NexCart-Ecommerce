@@ -1,5 +1,6 @@
 import Review from "../Models/ReviewSchema.js";
 import Order from "../Models/OrderSchema.js";
+import { recalculateProductRating } from "../utils/updateProductRating.js";
 
 // ─────────────────────────────────────────────────
 // Add Review
@@ -47,6 +48,9 @@ export const AddReview = async (req, res) => {
       rating: Number(rating),
       comment
     });
+
+    // Recalculate and persist average rating + numReviews to Product
+    await recalculateProductRating(productId);
 
     const populated = await Review.findById(review._id).populate(
       "userId",
@@ -129,6 +133,9 @@ export const UpdateReview = async (req, res) => {
 
     await review.save();
 
+    // Recalculate rating on product
+    await recalculateProductRating(review.productId);
+
     const populated = await Review.findById(review._id).populate(
       "userId",
       "name image"
@@ -166,6 +173,9 @@ export const DeleteReview = async (req, res) => {
         message: "Review nahi mila"
       });
     }
+
+    // Recalculate rating on product
+    await recalculateProductRating(review.productId);
 
     return res.status(200).json({
       status: "success",

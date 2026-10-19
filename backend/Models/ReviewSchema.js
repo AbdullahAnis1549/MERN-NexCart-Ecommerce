@@ -23,6 +23,11 @@ const reviewSchema = new mongoose.Schema(
       type: String,
       trim: true,
       maxlength: [500, "Comment max 500 characters"]
+    },
+    isSeeded: {
+      type: Boolean,
+      default: false,
+      index: true
     }
   },
   { timestamps: true }

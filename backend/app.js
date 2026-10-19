@@ -19,7 +19,10 @@ const app = express();
 const allowedOrigins = [
   process.env.FRONTEND_URL,   // set this in .env for production (e.g. https://yourdomain.com)
   "http://localhost:5173",     // Vite dev server
+  "http://localhost:5174",     // Vite dev server when 5173 is already in use
   "http://localhost:3000",     // fallback dev port
+  "http://localhost:8081",     // Expo Metro dev server
+  "http://localhost:19006",    // Expo web fallback port
 ].filter(Boolean);
 
 app.use(
@@ -75,7 +78,6 @@ app.use((err, req, res, next) => {
 });
 
 export default app;
-
 
 
 

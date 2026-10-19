@@ -5,6 +5,7 @@ import User from "../Models/UserSchema.js";
 import sendEmail from "../utils/SendEmail.js";
 import { orderConfirmationEmail } from "../utils/OrderEmailTemplate.js";
 import { invoiceHtml as buildInvoiceHtml } from "../utils/InvoiceTemplate.js";
+import { formatProduct } from "../utils/productHelper.js";
 
 // ─────────────────────────────────────────────────
 // Shipping Charge Logic
@@ -31,10 +32,7 @@ export const PlaceOrder = async (req, res) => {
       });
     }
 
-    const cart = await Cart.findOne({ userId }).populate({
-      path: "items.productId",
-      select: "name price mainStock catid"
-    });
+    const cart = await Cart.findOne({ userId }).populate("items.productId");
 
     if (!cart || !cart.items || cart.items.length === 0) {
       return res.status(400).json({
@@ -43,38 +41,77 @@ export const PlaceOrder = async (req, res) => {
       });
     }
 
-    // Stock validation + compute subtotal
+    // Stock validation + compute subtotal using active sale price
     let totalAmount = 0;
+    const orderItems = [];
+
     for (const item of cart.items) {
       const product = await Product.findById(item.productId._id);
       if (!product) {
         return res.status(404).json({ status: "fail", message: "Product not found" });
       }
-      if (product.mainStock < item.quantity) {
-        return res.status(400).json({
-          status: "fail",
-          message: `Insufficient stock for ${product.name}`
-        });
+
+      // Check variant stock if product has variants
+      if (product.variants && product.variants.length > 0) {
+        const variant = product.variants.find(
+          (v) =>
+            (!item.color || v.color?.toLowerCase() === item.color?.toLowerCase()) &&
+            (!item.size || v.size?.toLowerCase() === item.size?.toLowerCase())
+        );
+        if (!variant || variant.stock < item.quantity) {
+          return res.status(400).json({
+            status: "fail",
+            message: `Insufficient stock for ${product.name} (${item.color || ""} ${item.size || ""})`
+          });
+        }
+      } else {
+        if (product.mainStock < item.quantity) {
+          return res.status(400).json({
+            status: "fail",
+            message: `Insufficient stock for ${product.name}`
+          });
+        }
       }
-      totalAmount += product.price * item.quantity;
+
+      const formatted = formatProduct(product);
+      const unitPrice = formatted.activePrice;
+      totalAmount += unitPrice * item.quantity;
+
+      orderItems.push({
+        productId: product._id,
+        quantity: item.quantity,
+        color: item.color || null,
+        size: item.size || null,
+        priceAtPurchase: unitPrice
+      });
     }
 
     // Shipping charge calculate karo
     const shippingCharge = calculateShipping(totalAmount);
     const grandTotal = totalAmount + shippingCharge;
 
-    // Stock decrement
+    // Stock decrement + mainStock sync
     for (const item of cart.items) {
-      await Product.findByIdAndUpdate(item.productId._id, {
-        $inc: { mainStock: -item.quantity }
-      });
+      const product = await Product.findById(item.productId._id);
+      if (product) {
+        if (product.variants && product.variants.length > 0) {
+          const variant = product.variants.find(
+            (v) =>
+              (!item.color || v.color?.toLowerCase() === item.color?.toLowerCase()) &&
+              (!item.size || v.size?.toLowerCase() === item.size?.toLowerCase())
+          );
+          if (variant) {
+            variant.stock = Math.max(0, variant.stock - item.quantity);
+          }
+          product.mainStock = product.variants.reduce((sum, v) => sum + Number(v.stock || 0), 0);
+          await product.save();
+        } else {
+          await Product.findByIdAndUpdate(product._id, {
+            $inc: { mainStock: -item.quantity }
+          });
+        }
+      }
     }
-
-    const orderItems = cart.items.map((item) => ({
-      productId: item.productId._id,
-      quantity: item.quantity,
-      priceAtPurchase: item.productId.price
-    }));
 
     const order = await Order.create({
       userId,
@@ -153,12 +190,21 @@ export const GetMyOrders = async (req, res) => {
     const userId = req.id;
 
     const orders = await Order.find({ userId })
-      .populate("items.productId", "name productimage price catid")
+      .populate("items.productId")
       .sort({ createdAt: -1 });
+
+    const formattedOrders = orders.map((order) => {
+      const orderObj = order.toObject();
+      orderObj.items = (orderObj.items || []).map((item) => ({
+        ...item,
+        productId: item.productId ? formatProduct(item.productId) : null
+      }));
+      return orderObj;
+    });
 
     return res.status(200).json({
       status: "success",
-      data: orders
+      data: formattedOrders
     });
   } catch (err) {
     console.log(err);
@@ -189,11 +235,27 @@ export const CancelOrder = async (req, res) => {
       });
     }
 
-    // Stock wapas karo
+    // Stock wapas karo (variant-aware)
     for (const item of order.items) {
-      await Product.findByIdAndUpdate(item.productId, {
-        $inc: { mainStock: item.quantity }
-      });
+      const product = await Product.findById(item.productId);
+      if (product) {
+        if (product.variants && product.variants.length > 0) {
+          const variant = product.variants.find(
+            (v) =>
+              (!item.color || v.color?.toLowerCase() === item.color?.toLowerCase()) &&
+              (!item.size || v.size?.toLowerCase() === item.size?.toLowerCase())
+          );
+          if (variant) {
+            variant.stock += item.quantity;
+          }
+          product.mainStock = product.variants.reduce((sum, v) => sum + Number(v.stock || 0), 0);
+          await product.save();
+        } else {
+          await Product.findByIdAndUpdate(item.productId, {
+            $inc: { mainStock: item.quantity }
+          });
+        }
+      }
     }
 
     order.status = "CANCELLED";

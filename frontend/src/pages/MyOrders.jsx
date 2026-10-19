@@ -155,10 +155,10 @@ function MyOrders() {
 <div className="rx-orders-grid" style={{ display: "grid", gridTemplateColumns: "1fr 250px", gap: "1.5rem" }}>
                 <div>
                   <h4 style={{ color: "#cbd5e1", fontSize: "0.9rem", marginBottom: "0.75rem" }}>ITEMS ORDERED</h4>
-                  {order.items.map((item) => {
+                  {order.items.map((item, idx) => {
                     if (!item.productId) return null;
                     return (
-                      <div key={item.productId._id} style={{ display: "flex", gap: "1rem", alignItems: "center", marginBottom: "0.75rem" }}>
+                      <div key={item._id || `${item.productId._id}-${idx}`} style={{ display: "flex", gap: "1rem", alignItems: "center", marginBottom: "0.75rem" }}>
                         <img
                           src={item.productId.productimage}
                           alt={item.productId.name}
@@ -166,7 +166,22 @@ function MyOrders() {
                         />
                         <div>
                           <p style={{ color: "#ffffff", fontWeight: "600", margin: 0, fontSize: "0.95rem" }}>{item.productId.name}</p>
-                          <p style={{ color: "#94a3b8", margin: 0, fontSize: "0.85rem" }}>
+                          {(item.color || item.size) && (
+                            <div style={{ display: "flex", gap: "0.4rem", alignItems: "center", marginTop: "0.25rem", flexWrap: "wrap" }}>
+                              {item.color && (
+                                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.3rem", backgroundColor: "#131921", border: "1px solid #2e3a52", padding: "0.1rem 0.45rem", borderRadius: "4px", fontSize: "0.75rem", color: "#cbd5e1" }}>
+                                  <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: item.color, border: "1px solid rgba(255,255,255,0.4)" }} />
+                                  {item.color}
+                                </span>
+                              )}
+                              {item.size && (
+                                <span style={{ backgroundColor: "#131921", border: "1px solid #2e3a52", padding: "0.1rem 0.45rem", borderRadius: "4px", fontSize: "0.75rem", color: "#cbd5e1", fontWeight: "600" }}>
+                                  Size: {item.size}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          <p style={{ color: "#94a3b8", margin: 0, fontSize: "0.85rem", marginTop: "0.2rem" }}>
                             Qty: {item.quantity} × Rs. {item.priceAtPurchase?.toLocaleString()}
                           </p>
                         </div>

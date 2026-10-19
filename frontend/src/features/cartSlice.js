@@ -11,24 +11,26 @@ export const fetchCart = createAsyncThunk("cart/fetchCart", async () => {
 // Isse har action ek hi network call me complete ho jata hai, do nahi.
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
-  async ({ productId, quantity }) => {
-    const res = await api.post("/cart/add", { productId, quantity });
+  async ({ productId, quantity, color, size }) => {
+    const res = await api.post("/cart/add", { productId, quantity, color, size });
     return res.data.data;
   }
 );
 
 export const updateCartQty = createAsyncThunk(
   "cart/updateCartQty",
-  async ({ productId, quantity }) => {
-    const res = await api.patch(`/cart/qty/${productId}`, { quantity });
+  async ({ itemId, productId, quantity }) => {
+    const id = itemId || productId;
+    const res = await api.patch(`/cart/qty/${id}`, { quantity });
     return res.data.data;
   }
 );
 
 export const removeFromCart = createAsyncThunk(
   "cart/removeFromCart",
-  async (productId) => {
-    const res = await api.delete(`/cart/remove/${productId}`);
+  async (id) => {
+    const itemId = typeof id === "object" ? id.itemId || id.productId : id;
+    const res = await api.delete(`/cart/remove/${itemId}`);
     return res.data.data;
   }
 );

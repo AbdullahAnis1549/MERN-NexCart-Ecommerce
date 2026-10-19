@@ -1,6 +1,37 @@
 import Cart from "../Models/CartSchema.js";
 import Wishlist from "../Models/WishlistSchema.js";
 import Product from "../Models/ProductSchema.js";
+import { formatProduct } from "../utils/productHelper.js";
+
+const formatCartResponse = (cart) => {
+  if (!cart) return { items: [] };
+  const raw = typeof cart.toObject === "function" ? cart.toObject() : { ...cart };
+  const items = (raw.items || []).map((item) => {
+    return {
+      ...item,
+      productId: item.productId ? formatProduct(item.productId) : null
+    };
+  });
+  return {
+    ...raw,
+    items
+  };
+};
+
+const formatWishlistResponse = (wishlist) => {
+  if (!wishlist) return { items: [] };
+  const raw = typeof wishlist.toObject === "function" ? wishlist.toObject() : { ...wishlist };
+  const items = (raw.items || []).map((item) => {
+    return {
+      ...item,
+      productId: item.productId ? formatProduct(item.productId) : null
+    };
+  });
+  return {
+    ...raw,
+    items
+  };
+};
 
 // -----------------------
 // Cart
@@ -8,7 +39,7 @@ import Product from "../Models/ProductSchema.js";
 export const AddToCart = async (req, res) => {
   try {
     const userId = req.id;
-    const { productId, quantity } = req.body;
+    const { productId, quantity, color, size } = req.body;
 
     if (!productId) {
       return res.status(400).json({
@@ -17,9 +48,8 @@ export const AddToCart = async (req, res) => {
       });
     }
 
-    const qty = quantity === undefined ? 1 : quantity;
-
-    if (qty === null || qty === undefined || Number(qty) < 1) {
+    const qty = quantity === undefined ? 1 : Number(quantity);
+    if (isNaN(qty) || qty < 1) {
       return res.status(400).json({
         status: "fail",
         message: "quantity must be >= 1"
@@ -27,11 +57,46 @@ export const AddToCart = async (req, res) => {
     }
 
     // Ensure product exists
-    const productExists = await Product.findById(productId);
-    if (!productExists) {
+    const product = await Product.findById(productId);
+    if (!product) {
       return res.status(404).json({
         status: "fail",
         message: "Product not found"
+      });
+    }
+
+    // Validate required color/size if product has them
+    if (product.colors && product.colors.length > 0 && !color) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Please select a color"
+      });
+    }
+
+    if (product.sizes && product.sizes.length > 0 && !size) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Please select a size"
+      });
+    }
+
+    // Validate variant stock if product has variants
+    if (product.variants && product.variants.length > 0) {
+      const variant = product.variants.find(
+        (v) =>
+          (!color || v.color?.toLowerCase() === color?.toLowerCase()) &&
+          (!size || v.size?.toLowerCase() === size?.toLowerCase())
+      );
+      if (!variant || variant.stock < qty) {
+        return res.status(400).json({
+          status: "fail",
+          message: `Selected variant is out of stock (${variant ? variant.stock : 0} available)`
+        });
+      }
+    } else if (product.mainStock < qty) {
+      return res.status(400).json({
+        status: "fail",
+        message: `Insufficient stock (${product.mainStock} available)`
       });
     }
 
@@ -39,14 +104,30 @@ export const AddToCart = async (req, res) => {
     if (!cart) {
       cart = await Cart.create({
         userId,
-        items: [{ productId, quantity: Number(qty) }]
+        items: [{
+          productId,
+          quantity: qty,
+          color: color || null,
+          size: size || null
+        }]
       });
     } else {
-      const existing = cart.items.find((i) => i.productId.toString() === productId);
+      const existing = cart.items.find(
+        (i) =>
+          i.productId.toString() === productId &&
+          (i.color || null) === (color || null) &&
+          (i.size || null) === (size || null)
+      );
+
       if (existing) {
-        existing.quantity += Number(qty);
+        existing.quantity += qty;
       } else {
-        cart.items.push({ productId, quantity: Number(qty) });
+        cart.items.push({
+          productId,
+          quantity: qty,
+          color: color || null,
+          size: size || null
+        });
       }
       await cart.save();
     }
@@ -58,7 +139,7 @@ export const AddToCart = async (req, res) => {
 
     return res.status(200).json({
       status: "success",
-      data: populated
+      data: formatCartResponse(populated)
     });
   } catch (err) {
     console.log(err);
@@ -72,7 +153,7 @@ export const AddToCart = async (req, res) => {
 export const RemoveFromCart = async (req, res) => {
   try {
     const userId = req.id;
-    const { productId } = req.params;
+    const { productId } = req.params; // Can be item._id or productId
 
     const cart = await Cart.findOne({ userId });
     if (!cart) {
@@ -82,8 +163,15 @@ export const RemoveFromCart = async (req, res) => {
       });
     }
 
-    cart.items = cart.items.filter((i) => i.productId.toString() !== productId);
-    await cart.save();
+    // Match by item._id first, or by productId
+    const initialLen = cart.items.length;
+    cart.items = cart.items.filter(
+      (i) => i._id?.toString() !== productId && i.productId?.toString() !== productId
+    );
+
+    if (cart.items.length !== initialLen) {
+      await cart.save();
+    }
 
     const populated = await Cart.findOne({ userId }).populate({
       path: "items.productId",
@@ -92,7 +180,7 @@ export const RemoveFromCart = async (req, res) => {
 
     return res.status(200).json({
       status: "success",
-      data: populated
+      data: formatCartResponse(populated)
     });
   } catch (err) {
     console.log(err);
@@ -114,7 +202,7 @@ export const GetCart = async (req, res) => {
 
     return res.status(200).json({
       status: "success",
-      data: cart || { userId, items: [] }
+      data: formatCartResponse(cart) || { userId, items: [] }
     });
   } catch (err) {
     console.log(err);
@@ -128,7 +216,7 @@ export const GetCart = async (req, res) => {
 export const UpdateCartQuantity = async (req, res) => {
   try {
     const userId = req.id;
-    const { productId } = req.params;
+    const { productId } = req.params; // Can be item._id or productId
     const { quantity } = req.body;
 
     if (quantity === undefined || quantity === null) {
@@ -154,12 +242,38 @@ export const UpdateCartQuantity = async (req, res) => {
       });
     }
 
-    const item = cart.items.find((i) => i.productId.toString() === productId);
+    const item =
+      cart.items.find((i) => i._id?.toString() === productId) ||
+      cart.items.find((i) => i.productId?.toString() === productId);
+
     if (!item) {
       return res.status(404).json({
         status: "fail",
         message: "Product not in cart"
       });
+    }
+
+    // Validate stock
+    const product = await Product.findById(item.productId);
+    if (product) {
+      if (product.variants && product.variants.length > 0) {
+        const variant = product.variants.find(
+          (v) =>
+            (!item.color || v.color?.toLowerCase() === item.color?.toLowerCase()) &&
+            (!item.size || v.size?.toLowerCase() === item.size?.toLowerCase())
+        );
+        if (!variant || variant.stock < qty) {
+          return res.status(400).json({
+            status: "fail",
+            message: `Only ${variant ? variant.stock : 0} items available for this variant`
+          });
+        }
+      } else if (product.mainStock < qty) {
+        return res.status(400).json({
+          status: "fail",
+          message: `Only ${product.mainStock} items available in stock`
+        });
+      }
     }
 
     item.quantity = qty;
@@ -172,7 +286,7 @@ export const UpdateCartQuantity = async (req, res) => {
 
     return res.status(200).json({
       status: "success",
-      data: populated
+      data: formatCartResponse(populated)
     });
   } catch (err) {
     console.log(err);

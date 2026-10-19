@@ -1,14 +1,18 @@
 import Product from "../Models/ProductSchema.js";
 import { uploadImage } from "../utils/Uploadimage.js";
+import { formatProduct, formatProducts } from "../utils/productHelper.js";
 
-// GET ALL PRODUCTS — Search, Filter, Pagination
-// Query Params:
-//   search   → product name se search (case-insensitive)
-//   catid    → category id se filter
-//   minPrice → minimum price
-//   maxPrice → maximum price
-//   page     → page number (default: 1)
-//   limit    → items per page (default: 10)
+const safeJsonParse = (val, fallback = []) => {
+    if (!val) return fallback;
+    if (Array.isArray(val)) return val;
+    try {
+        const parsed = JSON.parse(val);
+        return Array.isArray(parsed) ? parsed : fallback;
+    } catch {
+        return fallback;
+    }
+};
+
 export const GetAllProduct = async (req, res) => {
     try {
         const {
@@ -72,7 +76,7 @@ export const GetAllProduct = async (req, res) => {
             totalPages,
             currentPage: pageNum,
             limit: limitNum,
-            data: products
+            data: formatProducts(products)
         });
 
     } catch (err) {
@@ -88,7 +92,21 @@ export const GetAllProduct = async (req, res) => {
 // CREATE PRODUCT
 export const CreateProduct = async (req, res) => {
     try {
-        const { pname, pprice, catid, pdescription, mainStock, isBestSeller, isFeatured } = req.body;
+        const {
+            pname,
+            pprice,
+            catid,
+            pdescription,
+            mainStock,
+            isBestSeller,
+            isFeatured,
+            salePrice,
+            saleStartDate,
+            saleEndDate,
+            colors,
+            sizes,
+            variants
+        } = req.body;
 
         if (!pname || !pprice || !catid || mainStock === undefined || !req.file || !pdescription) {
             return res.status(400).json({
@@ -97,20 +115,36 @@ export const CreateProduct = async (req, res) => {
             });
         }
 
+        const parsedColors = safeJsonParse(colors, []);
+        const parsedSizes = safeJsonParse(sizes, []);
+        const parsedVariants = safeJsonParse(variants, []);
+
+        let computedStock = Number(mainStock);
+        if (parsedVariants.length > 0) {
+            // Keep mainStock in sync with sum of variant stocks
+            computedStock = parsedVariants.reduce((sum, v) => sum + Number(v.stock || 0), 0);
+        }
+
         const pro = await Product.create({
             name: pname,
-            price: pprice,
+            price: Number(pprice),
             catid: catid,
             productimage: req.file.path,
             pdescription: pdescription,
-            mainStock: mainStock,
+            mainStock: computedStock,
             isBestSeller: isBestSeller === true || isBestSeller === "true",
-            isFeatured: isFeatured === true || isFeatured === "true"
+            isFeatured: isFeatured === true || isFeatured === "true",
+            salePrice: salePrice ? Number(salePrice) : null,
+            saleStartDate: saleStartDate ? new Date(saleStartDate) : null,
+            saleEndDate: saleEndDate ? new Date(saleEndDate) : null,
+            colors: parsedColors,
+            sizes: parsedSizes,
+            variants: parsedVariants
         });
 
         return res.status(201).json({
             status: "success",
-            data: pro
+            data: formatProduct(pro)
         });
 
     } catch (err) {
@@ -136,7 +170,7 @@ export const GetProduct = async (req, res) => {
         }
         return res.status(200).json({
             status: "success",
-            data: pro
+            data: formatProduct(pro)
         });
 
     } catch (err) {
@@ -151,34 +185,67 @@ export const GetProduct = async (req, res) => {
 // UPDATE PRODUCT
 export const UpdateProduct = async (req, res) => {
     try {
-        const { pname, pprice, catid, productdescription, pdescription, mainStock, isBestSeller, isFeatured } = req.body;
+        const {
+            pname,
+            pprice,
+            catid,
+            productdescription,
+            pdescription,
+            mainStock,
+            isBestSeller,
+            isFeatured,
+            salePrice,
+            saleStartDate,
+            saleEndDate,
+            colors,
+            sizes,
+            variants
+        } = req.body;
         const id = req.params.id;
-
-        if (!pname && !pprice && !catid && !productdescription && !pdescription && mainStock === undefined && isBestSeller === undefined && isFeatured === undefined && !req.file) {
-            return res.status(400).json({
-                status: "fail",
-                message: "At least one field is required to update"
-            });
-        }
 
         const updateData = {};
         if (pname) updateData.name = pname;
-        if (pprice) updateData.price = pprice;
+        if (pprice) updateData.price = Number(pprice);
         if (catid) updateData.catid = catid;
         if (productdescription || pdescription) updateData.pdescription = productdescription || pdescription;
-        if (mainStock !== undefined) updateData.mainStock = mainStock;
         if (isBestSeller !== undefined) updateData.isBestSeller = isBestSeller === true || isBestSeller === "true";
         if (isFeatured !== undefined) updateData.isFeatured = isFeatured === true || isFeatured === "true";
         if (req.file) updateData.productimage = req.file.path;
 
+        if (salePrice !== undefined) updateData.salePrice = salePrice ? Number(salePrice) : null;
+        if (saleStartDate !== undefined) updateData.saleStartDate = saleStartDate ? new Date(saleStartDate) : null;
+        if (saleEndDate !== undefined) updateData.saleEndDate = saleEndDate ? new Date(saleEndDate) : null;
+
+        if (colors !== undefined) updateData.colors = safeJsonParse(colors, []);
+        if (sizes !== undefined) updateData.sizes = safeJsonParse(sizes, []);
+
+        if (variants !== undefined) {
+            const parsedVariants = safeJsonParse(variants, []);
+            updateData.variants = parsedVariants;
+            if (parsedVariants.length > 0) {
+                updateData.mainStock = parsedVariants.reduce((sum, v) => sum + Number(v.stock || 0), 0);
+            } else if (mainStock !== undefined) {
+                updateData.mainStock = Number(mainStock);
+            }
+        } else if (mainStock !== undefined) {
+            updateData.mainStock = Number(mainStock);
+        }
+
         const pro = await Product.findByIdAndUpdate(id, updateData, {
             returnDocument: "after",
             runValidators: true
-        });
+        }).populate("catid");
+
+        if (!pro) {
+            return res.status(404).json({
+                status: "fail",
+                message: "Product not found"
+            });
+        }
 
         return res.status(200).json({
             status: "success",
-            data: pro
+            data: formatProduct(pro)
         });
 
     } catch (err) {

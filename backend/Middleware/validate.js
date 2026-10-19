@@ -133,7 +133,8 @@ export const validateCreateCategory = (req, res, next) => {
 // ─── Review Validators ────────────────────────────────────────────────────────
 
 export const validateReview = (req, res, next) => {
-  const { productId, rating, comment } = req.body;
+  const productId = req.params.productId || req.body.productId;
+  const { rating, comment } = req.body;
 
   if (!productId)
     return err(res, "productId is required", "productId");

@@ -24,9 +24,22 @@ const orderSchema = new mongoose.Schema(
           type: Number,
           required: true,
           min: [0, "price must be >= 0"]
+        },
+        color: {
+          type: String,
+          default: null
+        },
+        size: {
+          type: String,
+          default: null
         }
       }
     ],
+    isSeeded: {
+      type: Boolean,
+      default: false,
+      index: true
+    },
     // Address fields (keep it generic)
     shippingAddress: {
       type: String,
